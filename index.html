@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sad Cats</title>
+    <script src="code/main.js" defer></script>
+    <style>
+        /* latin-ext */
+        @font-face {
+            font-family: 'Righteous';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(code/Righteous/Righteous-Regular.ttf) format('woff2');
+            unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
+
+        /* latin */
+        @font-face {
+            font-family: 'Righteous';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(code/Righteous/Righteous-Regular.ttf) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            border: none;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            overflow: hidden;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            background-color: #20201D;
+            padding: 10px;
+            border-radius: 45px;
+            width: fit-content;
+            box-shadow: 0 0 4px 0 black inset;
+
+        }
+
+        button {
+            width: 70px;
+            font-size: 30px;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            box-shadow: 0 0 4px 0 black;
+            transition: background-color 0.1s;
+        }
+
+        button[data-playing="false"][data-scheduled="true"] {
+            background-color: #17A398;
+        }
+
+        button[data-playing="false"][data-scheduled="false"] {
+            background-color: #33312E;
+        }
+
+        button[data-playing="true"][data-scheduled="true"] {
+            background-color: #EE6C4D;
+        }
+
+        button[data-playing="true"][data-scheduled="false"] {
+            background-color: #662C91;
+        }
+
+        #progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background-color: #33312E;
+        }
+
+        #progress-inner {
+            background-color: #17A398;
+            height: 100%;
+            width: 0;
+        }
+
+        #progress[data-first="false"] {
+            background-color: #17A398;
+        }
+
+        #progress[data-first="false"] #progress-inner {
+            background-color: #33312E;
+        }
+
+        #wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 80px;
+            width: 100%;
+            justify-items: center;
+        }
+
+        .player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #cat-2 {
+            padding-top: 80px;
+        }
+
+        #cat-1 {
+            padding-top: 20px;
+        }
+
+        .photo {
+            aspect-ratio: 1;
+            width: 100%;
+            position: relative;
+        }
+
+        img {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            display: none;
+        }
+
+        [data-cycle="a"] .cycle-a {
+            display: block;
+        }
+
+        [data-cycle="b"] .cycle-b {
+            display: block;
+        }
+
+        .player:not(.microphone) img.microphone {
+            display: none;
+        }
+
+        .player:not(.trumpet) img.trumpet {
+            display: none;
+        }
+
+        .player:not(.keys) img.keys {
+            display: none;
+        }
+
+        .player:not(.drums) img.drums {
+            display: none;
+        }
+
+        #stolen {
+            font-size: 0.5rem;
+            position: absolute;
+            right: 0;
+            bottom: 8px;
+            padding: 4px;
+            color: #33312E;
+            transition: color 0.2s;
+        }
+
+        #stolen:hover {
+            color: white;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        a:hover {
+            color: #17A398;
+        }
+
+        :root {
+            font-size: 200%;
+            line-height: 1.2;
+            font-family: 'Righteous', sans-serif;
+        }
+
+        section {
+            position: absolute;
+            height: 100vh;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: black;
+            opacity: 1;
+            transition: bottom 1s;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fade {
+            bottom: 100vh;
+        }
+
+        section div {
+            background: #17A398;
+            color: white;
+            border-radius: 20px;
+            padding: 1ch;
+            max-width: 36ch;
+            margin: 1ch;
+            transform: rotate(-2deg);
+        }
+
+        section p {
+            margin: 0.5rem 0;
+        }
+
+        #jas,
+        #sign {
+            font-size: 2rem;
+        }
+
+        #sign,
+        #click {
+            text-align: right;
+        }
+
+        #click {
+            font-size: 0.5rem;
+        }
+
+        section span {
+            font-size: 0.5em;
+        }
+    </style>
+</head>
+
+<body data-cycle="a">
+    <div id="wrapper">
+        <div id="grid">
+            <div id="cat-1" class="player">
+                <div class="photo"></div>
+                <div class="buttons">
+                    <button type="button" data-instrument="microphone">🎙️</button>
+                    <button type="button" data-instrument="trumpet">🎺</button>
+                    <button type="button" data-instrument="drums">🥁</button>
+                </div>
+            </div>
+
+            <div id="cat-2" class="player">
+                <div class="photo"></div>
+                <div class="buttons">
+                    <button type="button" data-instrument="microphone">🎙️</button>
+                    <button type="button" data-instrument="keys">🎹</button>
+                    <button type="button" data-instrument="drums">🥁</button>
+                </div>
+            </div>
+
+            <div id="cat-3" class="player">
+                <div class="photo"></div>
+                <div class="buttons">
+                    <button type="button" data-instrument="microphone">🎙️</button>
+                    <button type="button" data-instrument="keys">🎹</button>
+                    <button type="button" data-instrument="drums">🥁</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="progress">
+        <div id="progress-inner"></div>
+    </div>
+    <p id="stolen">Music kindly stolen from <a href="https://www.incredibox.com/demo" target="_blank">incredibox.com</a></p>
+    <section>
+        <div>
+            <p id="jas">yo jas!</p>
+            <p>merry xmas and happy new year :D</p>
+            <p>a little gift from me to you, it's a performance by The Sad Cats! <span>(They're not actually sad, it's just their cool band name!)</span></p>
+            <p>enjoy!</p>
+            <p id="sign">love, j <span>xoxo</span></p>
+            <p id="click">(click anywhere to start)</p>
+        </div>
+    </section>
+</body>
+
+</html>
